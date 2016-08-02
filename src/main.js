@@ -5,7 +5,7 @@ import obj from './objects';
 
 //Set Enviroment
 var debug = false;
-var loaded = {car:false}
+var loaded = {car:false,grids:0}
 
 //Create Scene
 var scene = new THREE.Scene();
@@ -61,14 +61,23 @@ var gui = () => {
 scene.add(camera);
 scene.add(lights());
 for (var i = 0; i < obj.grids.length; i++) {
-	scene.add(obj.grids[i]);
+	if(typeof obj.grids[i]=='function'){
+		obj.grids[i]().then(value=>{
+			obj.grids[i] = value;
+			scene.add(obj.grids[i]);
+			loaded.grids++;
+		})
+	}
+	else
+		scene.add(obj.grids[i]);
 }
 scene.add(obj.sun);
 obj.car().then(value=>{
 	loaded.car = true;
 	scene.add(value);
 	obj.car = value;
-})
+});
+
 
 // scene.add(obj.car);
 
