@@ -27,7 +27,6 @@ grid5.position.z = -(defaults.gridSize*2.2);
 
 /*
 ALPHA AND TEXTURE
-*/
 let gridTest = () => {
 
 	let alphaMap = () => {
@@ -45,22 +44,22 @@ let gridTest = () => {
 			texture.repeat.set(10,10);
 			let grid = new THREE.Mesh(
 				new THREE.PlaneGeometry(500, 500),
-				new THREE.MeshBasicMaterial({color:0xffff00,side:THREE.DoubleSide,map:texture,transparent:true})
+				new THREE.MeshBasicMaterial({color:0xffff00,side:THREE.DoubleSide,map:texture})
 				)
+			grid.material.transparent=true;
 			grid.position.z = -500;
 			grid.position.y = .8;
-			console.log(grid);
-			// alphaMap().then((alpha)=>{
-				// grid.material.alphaMap = alpha;
+			alphaMap().then((alpha)=>{
+				// console.log(alpha);
+				grid.material.alphaMap = alpha;
+				// console.log(grid);
 				resolve(grid);
-			// })
-			// return grid;
+			})
 		})
 	})
 };
-
-/*
-TODO: CSS3DOBJECT
-let gridTest = 
-*/
 export default [grid1,grid2,grid3,gridTest,grid4,grid5];
+*/
+
+
+export default [grid1,grid2,grid3,grid4,grid5];

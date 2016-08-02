@@ -1,7 +1,9 @@
 import {defaults,params} from './variables';
 import {normalCam,debugCam} from './camera';
-import lights from './lights';
+import light from './lights';
 import obj from './objects';
+import createGui from './gui'
+
 
 //Set Enviroment
 var debug = false;
@@ -12,7 +14,7 @@ var scene = new THREE.Scene();
 scene.add( new THREE.AmbientLight( 0x404040 ));
 
 //Create Renderer
-var renderer = new THREE.WebGLRenderer();
+var renderer = new THREE.WebGLRenderer({ antialias: false });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -28,38 +30,104 @@ window.addEventListener( 'resize', () =>{
 }, false );
 
 //Create gui
-var gui = () => {
-	var gui = new dat.GUI();
-	var f1 = gui.addFolder('Camera Velocity');
-	f1.add(defaults.cam.velocity,'x',0,.09);
-	f1.add(defaults.cam.velocity,'y',0,.09);
-	f1.add(defaults.cam.velocity,'z',0,.09);
-	// f1.open();
-	var f2 = gui.addFolder('Camera Movement');
-	f2.add(defaults.cam.movement,'x',['sin','cos']);
-	f2.add(defaults.cam.movement,'y',['sin','cos']);
-	f2.add(defaults.cam.movement,'z',['sin','cos']);
-	// f2.open();
-
-	var f3 = gui.addFolder('Camera Position');
-	f3.add(camera.position,'x').listen();
-	f3.add(camera.position,'y').listen();
-	f3.add(camera.position,'z').listen();
-	// f3.open();
-
-	var f4 = gui.addFolder('Camera Maximum');
-	f4.add(defaults.cam.max_movement,'x',0,10);
-	f4.add(defaults.cam.max_movement,'y',0,10);
-	f4.add(defaults.cam.max_movement,'z',0,10);
-	// f4.open();
-
-	var f5 = gui.addFolder('Grid');
-	f5.add(defaults,'gridVel', -1,1).listen();
-}
+var gui = new dat.GUI();
+var guiValues = [
+	{
+		name:"Camera Velocity",
+		open:true,
+		children:[
+			{
+				param:defaults.cam.velocity,
+				val:'x',
+				min:0,
+				max:.09
+			},
+			{
+				param:defaults.cam.velocity,
+				val:'y',
+				min:0,
+				max:.09
+			},
+			{
+				param:defaults.cam.velocity,
+				val:'z',
+				min:0,
+				max:.09
+			}
+		]
+	},
+	{
+		name:"Camera Movement",
+		open:true,
+		children:[
+			{
+				param:defaults.cam.movement,
+				val:'x',
+				array:['sin','cos']
+			},
+			{
+				param:defaults.cam.movement,
+				val:'y',
+				array:['sin','cos']
+			},
+			{
+				param:defaults.cam.movement,
+				val:'z',
+				array:['sin','cos']
+			}
+		]
+	},
+	{
+		name:"Camera Position",
+		open:true,
+		children:[
+			{
+				param:camera.position,
+				val:'x',
+				listen:true
+			},
+			{
+				param:camera.position,
+				val:'y',
+				listen:true
+			},
+			{
+				param:camera.position,
+				val:'z',
+				listen:true
+			}
+		]
+	},
+	{
+		name:"Camera Maximum",
+		open:true,
+		children:[
+			{
+				param:defaults.cam.max_movement,
+				val:'x',
+				min:0,
+				max:10
+			},
+			{
+				param:defaults.cam.max_movement,
+				val:'y',
+				min:0,
+				max:10
+			},
+			{
+				param:defaults.cam.max_movement,
+				val:'z',
+				min:0,
+				max:10
+			}
+		]
+	},
+]
+createGui(gui,guiValues);
 
 //Add elements to canvas
 scene.add(camera);
-scene.add(lights());
+scene.add(light);
 for (var i = 0; i < obj.grids.length; i++) {
 	if(typeof obj.grids[i]=='function'){
 		obj.grids[i]().then(value=>{
@@ -78,10 +146,6 @@ obj.car().then(value=>{
 	obj.car = value;
 });
 
-
-// scene.add(obj.car);
-
-gui();
 
 //Define Render
 var render = () => {
