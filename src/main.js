@@ -3,14 +3,13 @@ import {normalCam,debugCam} from './camera';
 import light from './lights';
 import obj from './objects';
 import createGui from './gui'
-
+import Audio from './audio';
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 
 //Set Enviroment
 var debug = false;
 var loaded = {car:false,grids:0}
-
 //Create Scene
 var scene = new THREE.Scene();
 scene.add( new THREE.AmbientLight( 0x404040 ));
@@ -31,6 +30,9 @@ window.addEventListener( 'resize', () =>{
 	renderer.setSize( window.innerWidth, window.innerHeight );
 }, false );
 
+//Audio
+var audio = new Audio('audio/audio.mp3');
+console.log(audio);
 //Add elements to canvas
 scene.add(camera);
 scene.add(light);
@@ -51,6 +53,10 @@ obj.car().then(value=>{
 	scene.add(value);
 	obj.car = value;
 });
+
+for (let i = 0; i < obj.cubes.length; i++) {
+	scene.add(obj.cubes[i]);
+}
 
 
 //Define Render
@@ -91,9 +97,20 @@ var render = () => {
 	obj.grids[0].position.z -= defaults.gridVel;
 	obj.grids[1].position.z -= defaults.gridVel;
 	obj.grids[2].position.z -= defaults.gridVel;
-
+	renderCubes();
 	renderer.render(scene, camera);
 };
+
+function renderCubes(){
+	let k = 0;
+	for(let i = 0; i < obj.cubes.length; i++) {
+			let scale = audio.array[k] / 30;
+			scale = (scale < 1 ? 1 : scale)*5;
+			obj.cubes[i].scale.y = scale;
+			obj.cubes[i].position.y = scale*5;
+			k += (k < audio.array.length ? 1 : 0);
+	}
+}
 
 //Execute Render
 render();

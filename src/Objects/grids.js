@@ -9,8 +9,6 @@ let grid3 = new THREE.GridHelper( defaults.grid.size, defaults.grid.division, de
 
 // let gridTest = new THREE.GridHelper( defaults.grid.size, defaults.grid.division, 0xff9e00, 0xff9e00 );
 
-console.log(defaults.grid.division);
-
 let grid4 = new THREE.GridHelper( defaults.grid.size, defaults.grid.division, 0xff69b4, 0xff69b4 );
 
 let grid5 = new THREE.GridHelper( defaults.grid.size, defaults.grid.division, 0xffffff, 0xffffff );
@@ -56,7 +54,6 @@ let gridTest = () => {
 			alphaMap().then((alpha)=>{
 				alpha.wrapS = alpha.wrapT = THREE.ClampToEdgeWrapping;
 				grid.material.alphaMap = alpha;
-				console.log(grid);
 				resolve(grid);
 			})
 		})
