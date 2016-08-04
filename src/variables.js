@@ -1,5 +1,8 @@
 export var defaults = {
-	gridSize:600,
+	grid: {
+		size:3000,
+		division:400
+	},
 	color:0xff0000,
 	cam:{
 		position:{
