@@ -13,6 +13,7 @@ export default class Audio {
 		this.analyser;
 		this.buffer;
 		this.url = url;
+		this.url = '';
 		this.array = new Array();
 
 		this.request = new XMLHttpRequest();

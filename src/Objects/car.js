@@ -1,8 +1,13 @@
-var loader = new THREE.OBJLoader();
+export default class Car {
+	constructor(){
+		this.object;
+	}
 
-var loadCar = () =>{
-	return new Promise((resolve,reject) => {
-		loader.load(
+	addToScene(scene){
+		let loader = new THREE.OBJLoader();
+		let loadCar = () =>{
+			return new Promise((resolve,reject) => {
+				loader.load(
 			// resource URL
 			'/porsche.obj',
 			// Function when resource is loaded
@@ -15,22 +20,21 @@ var loadCar = () =>{
 				object.scale.set(.5,.5,.5);
 				for (let i = 0; i < object.children.length; i++) {
 					let mesh = object.children[i];
-					/*
-					let glow = new THREEx.GeometricGlowMesh(mesh);
-					mesh.add(glow.object3d);
-
-					let insideUniforms	= glow.insideMesh.material.uniforms
-					insideUniforms.glowColor.value.set('hotpink')
-					let outsideUniforms	= glow.outsideMesh.material.uniforms
-					outsideUniforms.glowColor.value.set('hotpink')*/
 
 					mesh.material.wireframe = true;
 					mesh.material.color.setHex(0xff69b4);
 				}
 				resolve(object);
 			}
-		);
-	})
+			);
+			})
+		}
+
+		return loadCar().then(val=>{
+			scene.add(val);
+			return val;
+		})
+	}
 }
 
-export default loadCar;
+

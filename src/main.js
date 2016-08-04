@@ -1,15 +1,21 @@
+if (! Detector.webgl ) Detector.addGetWebGLMessage();
+
 import {defaults,params} from './variables';
 import {normalCam,debugCam} from './camera';
 import light from './lights';
-import obj from './objects';
 import createGui from './gui'
 import Audio from './audio';
-if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
-
+import Grids from './Objects/grids.js';
+import Sun from './Objects/sun.js';
+import Car from './Objects/car.js';
+import Cubes from './Objects/cubes.js';
+import horizon from './Objects/horizon.js';
 
 //Set Enviroment
 var debug = false;
 var loaded = {car:false,grids:0}
+var gui = new dat.GUI();
+
 //Create Scene
 var scene = new THREE.Scene();
 scene.add( new THREE.AmbientLight( 0x404040 ));
@@ -32,31 +38,24 @@ window.addEventListener( 'resize', () =>{
 
 //Audio
 var audio = new Audio('audio/audio.mp3');
-console.log(audio);
+
+//Create objects
+var grids = new Grids();
+var sun = new Sun();
+var car = new Car();
+var cubes = new Cubes();
+
 //Add elements to canvas
 scene.add(camera);
 scene.add(light);
-for (var i = 0; i < obj.grids.length; i++) {
-	if(typeof obj.grids[i]=='function'){
-		obj.grids[i]().then(value=>{
-			obj.grids[i] = value;
-			scene.add(obj.grids[i]);
-			loaded.grids++;
-		})
-	}
-	else
-		scene.add(obj.grids[i]);
-}
-scene.add(obj.sun);
-obj.car().then(value=>{
-	loaded.car = true;
+grids.addToScene(scene);
+sun.addToScene(scene);
+car.addToScene(scene);
+cubes.addToScene(scene);
+horizon().then(value=>{
 	scene.add(value);
-	obj.car = value;
-});
-
-for (let i = 0; i < obj.cubes.length; i++) {
-	scene.add(obj.cubes[i]);
-}
+	loaded.grids++;
+})
 
 
 //Define Render
@@ -78,46 +77,16 @@ var render = () => {
 		camera.position.z = defaults.cam.position.z + defaults.cam.max_movement.z * zMov;
 	}
 
-
-	if(obj.grids[0].position.z > -10 && obj.grids[0].position.z < 10)
-	{
-		obj.grids[1].position.z = obj.grids[0].position.z + (defaults.grid.size*2) ;
-	}
-
-	if(obj.grids[1].position.z > -10 && obj.grids[1].position.z < 10)
-	{
-		obj.grids[2].position.z = obj.grids[1].position.z + (defaults.grid.size*2) ;
-	}
-
-	if(obj.grids[2].position.z > -10 && obj.grids[2].position.z < 10)
-	{
-		obj.grids[0].position.z = obj.grids[2].position.z + (defaults.grid.size*2);
-	}
-
-	obj.grids[0].position.z -= defaults.gridVel;
-	obj.grids[1].position.z -= defaults.gridVel;
-	obj.grids[2].position.z -= defaults.gridVel;
-	renderCubes();
+	grids.render();
+	cubes.render(audio);
 	renderer.render(scene, camera);
 };
-
-function renderCubes(){
-	let k = 0;
-	for(let i = 0; i < obj.cubes.length; i++) {
-			let scale = audio.array[k] / 30;
-			scale = (scale < 1 ? 1 : scale)*5;
-			obj.cubes[i].scale.y = scale;
-			obj.cubes[i].position.y = scale*5;
-			k += (k < audio.array.length ? 1 : 0);
-	}
-}
 
 //Execute Render
 render();
 
 //Create gui
-var gui = new dat.GUI();
-var guiValues = [
+createGui(gui,[
 	{
 		name:"Camera Velocity",
 		open:false,
@@ -208,5 +177,4 @@ var guiValues = [
 			}
 		]
 	},
-]
-createGui(gui,guiValues);
+]);
