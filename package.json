@@ -6,7 +6,8 @@
   "author": "Shane Osbourne",
   "license": "MIT",
   "scripts": {
-    "start": "node app"
+    "start": "node app",
+    "build": "webpack"
   },
   "dependencies": {},
   "devDependencies": {

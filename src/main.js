@@ -21,7 +21,7 @@ var scene = new THREE.Scene();
 scene.add( new THREE.AmbientLight( 0x404040 ));
 
 //Create Renderer
-var renderer = new THREE.WebGLRenderer({ antialias: false });
+var renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
